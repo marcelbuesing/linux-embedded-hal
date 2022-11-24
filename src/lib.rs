@@ -12,6 +12,8 @@
 
 #![deny(missing_docs)]
 
+#[cfg(feature = "can")]
+pub use socketcan;
 #[cfg(feature = "i2c")]
 pub use i2cdev;
 pub use nb;
@@ -41,6 +43,8 @@ pub use cdev_pin::CdevPin;
 /// Sysfs pin re-export
 pub use sysfs_pin::SysfsPin;
 
+#[cfg(feature = "can")]
+mod can;
 mod delay;
 #[cfg(feature = "i2c")]
 mod i2c;
@@ -49,6 +53,8 @@ mod serial;
 mod spi;
 mod timer;
 
+#[cfg(feature = "can")]
+pub use can::{CanSocket, CanFrame, CanError};
 pub use crate::delay::Delay;
 #[cfg(feature = "i2c")]
 pub use crate::i2c::{I2CError, I2cdev};

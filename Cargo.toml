@@ -13,13 +13,14 @@ version = "0.4.0-alpha.3"
 edition = "2018"
 
 [features]
+can = ["socketcan"]
 gpio_sysfs = ["sysfs_gpio"]
 gpio_cdev = ["gpio-cdev"]
 async-tokio = ["gpio-cdev/async-tokio"]
 i2c = ["i2cdev"]
 spi = ["spidev"]
 
-default = [ "gpio_cdev", "gpio_sysfs", "i2c", "spi" ]
+default = [ "can", "gpio_cdev", "gpio_sysfs", "i2c", "spi" ]
 
 [dependencies]
 embedded-hal = "=1.0.0-alpha.8"
@@ -29,6 +30,7 @@ i2cdev = { version = "0.5.1", optional = true }
 nb = "1"
 serial-core = "0.4.0"
 serial-unix = "0.4.0"
+socketcan = { git = "https://github.com/socketcan-rs/socketcan-rs.git", optional = true }
 spidev = { version = "0.5.1", optional = true }
 nix = "0.23.1"
 
