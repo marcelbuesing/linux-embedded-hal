@@ -74,12 +74,9 @@ mod embedded_hal_impl {
     use super::*;
     use embedded_hal::can::{blocking, ExtendedId, StandardId};
     use embedded_hal::can::{Error, ErrorKind, Frame, Id};
-    use socketcan::EFF_MASK;
+    use socketcan::{EFF_FLAG, EFF_MASK, SFF_MASK};
     use std::convert::TryInto;
     use std::io;
-
-    /// valid standard id bit (11bit)
-    const SFF_MASK: u16 = 0x07ff;
 
     impl Error for CanError {
         fn kind(&self) -> ErrorKind {
@@ -105,7 +102,7 @@ mod embedded_hal_impl {
     impl Frame for CanFrame {
         fn new(id: impl Into<Id>, data: &[u8]) -> Option<Self> {
             let raw_id = match id.into() {
-                Id::Extended(extended_id) => extended_id.as_raw(),
+                Id::Extended(extended_id) => extended_id.as_raw() | EFF_FLAG,
                 Id::Standard(standard_id) => standard_id.as_raw().into(),
             };
             let frame = socketcan::CanFrame::new(raw_id, data, false, false);
@@ -145,8 +142,8 @@ mod embedded_hal_impl {
                     .id()
                     .try_into()
                     .expect("Id exceeds max standard id u16");
-                let standard_id =
-                    StandardId::new(standard_id & SFF_MASK).expect("Id exceeds max standard id");
+                let standard_id = StandardId::new(standard_id & SFF_MASK as u16)
+                    .expect("Id exceeds max standard id");
                 Id::Standard(standard_id)
             }
         }
