@@ -114,7 +114,8 @@ mod embedded_hal_impl {
                 Id::Extended(extended_id) => extended_id.as_raw(),
                 Id::Standard(standard_id) => standard_id.as_raw().into(),
             };
-            let frame = socketcan::CanFrame::new(raw_id, &[], true, false);
+            let data: [u8; 8] = Default::default();
+            let frame = socketcan::CanFrame::new(raw_id, &data[0..dlc], true, false);
             frame.map(CanFrame).ok()
         }
 
