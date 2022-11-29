@@ -1,10 +1,11 @@
-use embedded_hal::can::blocking::Can;
+use embedded_hal::can::{blocking::Can, StandardId, Frame};
 use linux_embedded_hal::{CanSocket, CanFrame};
 
 fn main() {
     let mut socket = CanSocket::open("vcan0").expect("Failed to open socket");
 
-    let tx_frame = CanFrame::new(0x123, &[0x11, 0x22, 0x33], false, false).expect("Invalid frame");
+    let id = StandardId::new(0x01).expect("Invalid ID");
+    let tx_frame = CanFrame::new(id, &[0x11, 0x22, 0x33]).expect("Invalid frame");
 
     // You can observe the transmition e.g. using canutil's candump:
     // candump vcan0

@@ -4,14 +4,6 @@ use std::ops;
 #[derive(Debug)]
 pub struct CanFrame(pub socketcan::CanFrame);
 
-impl CanFrame {
-    /// TODO
-    pub fn new(id: u32, data: &[u8], rtr: bool, err: bool) -> Result<CanFrame, CanError> {
-        let frame = socketcan::CanFrame::new(id, data, rtr, err).unwrap();
-        Ok(CanFrame(frame))
-    }
-}
-
 impl ops::Deref for CanFrame {
     type Target = socketcan::CanFrame;
 
@@ -181,5 +173,23 @@ mod embedded_hal_impl {
     #[derive(Debug)]
     pub struct CanError {
         pub err: io::Error,
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use embedded_hal::can::*;
+
+    /// Ensure that a 100 ms delay takes at least 100 ms,
+    /// but not longer than 500 ms.
+    #[test]
+    fn test_can_id() {
+        let frame = CanFrame::new(
+            ExtendedId::new(0x123).expect("Invalid ID"),
+            &[0x00, 0x11, 0x22],
+        )
+        .expect("Invalid frame");
+        assert!(frame.is_extended());
     }
 }
